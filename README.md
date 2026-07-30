@@ -31,13 +31,6 @@ MiniOneRec 的基本思路，是先把每个 item 映射为 3 层 SID，再训�
 
 `consistency/` 主要探索 paired multi-view SFT。该分支为同一条样本构造 `SID history -> next SID` 和 `title history -> next SID` 两个视角，并通过分布一致性与表征一致性约束共同训练。
 
-## 当前阶段的核心结论
-
-当前最重要的结论不是“这些结构增强无效”，而是：
-
-这三条实验分支在不同程度上都改变了基础训练问题本身，因此它们与原始 MiniOneRec 基线并非完全等价的“轻量增量对比”。
-
-尤其是在 `multihead/` 和 `consistency/` 中，除了新增 loss 之外，训练任务组织方式、输入构造方式和优化目标都发生了变化。因此，当前实验结果更适合被理解为“结构化增强路线的阶段性研究结论”，而不是最终定型版本。
 
 ## 已有结果与观察
 
@@ -68,23 +61,6 @@ MiniOneRec 的基本思路，是先把每个 item 映射为 3 层 SID，再训�
 3. `prefix` 中 prefix-aware reward 可以改善粗粒度匹配，但不保证最终精确排序提升
 4. `consistency` 中 full-vocab 一致性与表征对齐可能过强，削弱了多视角互补性
 5. SID 层级结构本身并不完全干净，存在 collision 和 coarse level 利用不足的问题
-
-## 仓库内容
-
-本仓库保留了继续分析和推进实验所需的主要代码与文档，排除了大型训练产物和本地缓存。
-
-包含内容：
-
-- 训练与评测代码
-- 数据预处理与格式转换脚本
-- `rq/` 下的 SID 构建工具
-- 分支实验脚本与结果说明文档
-
-不包含内容：
-
-- 模型权重和训练 checkpoint
-- `output/`、`outputs/`、`results/`、`experiments/` 等生成目录
-- RL 中间产物目录与重复本地数据副本
 
 ## 仓库结构
 
@@ -150,20 +126,7 @@ bash multihead/rl.sh
 bash multihead/evaluate.sh
 ```
 
-如果复现 `prefix/` 或 `consistency/`，请改用对应目录下的脚本与入口文件。
 
-## 复现检查清单
-
-为了避免把“结构增强路线”误读成严格可比的单变量实验，建议每次新增结果时同步记录：
-
-- 训练分支：`prefix`、`multihead` 或 `consistency`
-- SFT base 是否与原始 MiniOneRec mixed-task setup 完全一致
-- SID 构建方式、层数、codebook size 和 collision 情况
-- 训练样本数、测试样本数、随机种子和 checkpoint 来源
-- 评测协议：constrained decoding、Top-K 指标、候选空间和过滤规则
-- 结果文件路径、运行命令和关键超参
-
-详细模板见 [`docs/reproducibility_checklist.md`](docs/reproducibility_checklist.md)。
 
 ## 后续工作
 
